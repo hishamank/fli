@@ -10,6 +10,7 @@ from typer.testing import CliRunner
 from fli.cli.errors import _write_log, json_error_payload, report_cli_error
 from fli.cli.main import app
 from fli.search.exceptions import (
+    GoogleFlightsRateLimited,
     SearchClientError,
     SearchConnectionError,
     SearchHTTPError,
@@ -50,6 +51,7 @@ def test_write_log_creates_file_with_traceback(tmp_path):
         (SearchTimeoutError("timed out"), "timeout"),
         (SearchConnectionError("dns"), "connection_error"),
         (SearchHTTPError("403", status_code=403), "http_error"),
+        (GoogleFlightsRateLimited("rate limited"), "rate_limited"),
         (SearchClientError("generic"), "search_error"),
         (RuntimeError("boom"), "unexpected_error"),
     ],
@@ -116,6 +118,7 @@ def test_multi_command_handles_timeout_cleanly(runner, monkeypatch, tmp_path):
         (SearchTimeoutError("slow"), "Request timed out. slow"),
         (SearchConnectionError("dns"), "Network error. dns"),
         (SearchHTTPError("403", status_code=403), "Google Flights error. 403"),
+        (GoogleFlightsRateLimited("quota"), "Google Flights rate-limited this request. quota"),
         (SearchClientError("generic failure"), "Search failed. generic failure"),
         (ValueError("bad input"), "Unexpected error: ValueError: bad input"),
     ],

@@ -17,6 +17,7 @@ import typer
 
 from fli.cli.console import console
 from fli.search.exceptions import (
+    GoogleFlightsRateLimited,
     SearchClientError,
     SearchConnectionError,
     SearchHTTPError,
@@ -33,6 +34,8 @@ def _friendly_message(exc: BaseException) -> str:
         return f"Request timed out. {exc}"
     if isinstance(exc, SearchConnectionError):
         return f"Network error. {exc}"
+    if isinstance(exc, GoogleFlightsRateLimited):
+        return f"Google Flights rate-limited this request. {exc}"
     if isinstance(exc, SearchHTTPError):
         return f"Google Flights error. {exc}"
     if isinstance(exc, SearchClientError):
@@ -96,6 +99,8 @@ def json_error_payload(exc: BaseException, *, command: str | None = None) -> tup
         return str(exc), "connection_error", log_path
     if isinstance(exc, SearchHTTPError):
         return str(exc), "http_error", log_path
+    if isinstance(exc, GoogleFlightsRateLimited):
+        return str(exc), "rate_limited", log_path
     if isinstance(exc, SearchClientError):
         return str(exc), "search_error", log_path
     return f"{exc.__class__.__name__}: {exc}", "unexpected_error", log_path
