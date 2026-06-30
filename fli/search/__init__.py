@@ -1,10 +1,12 @@
-from .dates import DatePrice, SearchDates
-from .exceptions import (
+from fli.search.exceptions import (
+    GoogleFlightsRateLimited,
     SearchClientError,
     SearchConnectionError,
     SearchHTTPError,
     SearchTimeoutError,
 )
+
+from .dates import DatePrice, SearchDates
 from .flights import SearchFlights
 
 __all__ = [
@@ -15,4 +17,5 @@ __all__ = [
     "SearchTimeoutError",
     "SearchConnectionError",
     "SearchHTTPError",
+    "GoogleFlightsRateLimited",
 ]
